@@ -24,7 +24,8 @@
     }
 
     #grad {
-      height: 900px;
+      height: 100vh;
+      overflow: hidden;
       background-color: rgba(41,79,168,255);
       background-image: linear-gradient(135deg, rgba(11,45,126,255), rgba(70,107,195,255));
     }
@@ -34,24 +35,32 @@
 <body class="center">
   <svg id="grad" width="100%" height="100%"></svg>
   <script>
-    var svg = d3.select("svg"),
-      width = 1600,
-      height = 900;
+    var width = 1600; //make smaller to zoom in
+    var height = 900; //make smaller to zoom in
+    var zoom = 1.5;
+
+    var svg = d3.select("svg")
+      .attr("viewBox", [-width / (2*zoom), -height / (2*zoom), width / zoom, height / zoom]);
+      // width = 1600,
+      // height = 900;
+      // width = window.innerHeight,
+      // height = window.innerWidth;
 
     var color = d3.scaleOrdinal(d3.schemeCategory10);
 
     var fisheye = d3.fisheye.circular() // fisheye
-      .radius(150)
-      .distortion(5);
+      .radius(120)
+      .distortion(2);
 
     var simulation = d3.forceSimulation()
       .force("link", d3.forceLink().id(function(d) { return d.id; }))
       .force("charge", d3.forceManyBody())
-      .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("x", d3.forceX().strength(-.02))
-      .force("y", d3.forceY().strength(-.01));
-      // .force("x", d3.forceX())
-      // .force("y", d3.forceY());
+      // .force("center", d3.forceCenter())
+      //width / 2, height / 2 // arg for forceCenter()
+      // .force("x", d3.forceX().strength(-.02))
+      // .force("y", d3.forceY().strength(-.01));
+      .force("x", d3.forceX())
+      .force("y", d3.forceY());
 
     d3.json("graph.json", function(error, graph) {
       if (error) throw error;
