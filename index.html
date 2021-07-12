@@ -35,43 +35,42 @@
 <body class="center">
   <svg id="grad" width="100%" height="100%"></svg>
   <script>
-    var width = 1600; //make smaller to zoom in
-    var height = 900; //make smaller to zoom in
-    var zoom = 1.5;
+    const width = 1600; //make smaller to zoom in
+    const height = 900; //make smaller to zoom in
+    const zoom = 1.5;
 
-    var svg = d3.select("svg")
+    const svg = d3.select("svg")
       .attr("viewBox", [-width / (2*zoom), -height / (2*zoom), width / zoom, height / zoom]);
       // width = 1600,
       // height = 900;
       // width = window.innerHeight,
       // height = window.innerWidth;
 
-    var color = d3.scaleOrdinal(d3.schemeCategory10);
+    const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-    var fisheye = d3.fisheye.circular() // fisheye
+    const fisheye = d3.fisheye.circular() // fisheye
       .radius(120)
       .distortion(2);
 
-    var simulation = d3.forceSimulation()
+    const simulation = d3.forceSimulation()
       .force("link", d3.forceLink().id(function(d) { return d.id; }))
       .force("charge", d3.forceManyBody())
-      // .force("center", d3.forceCenter())
-      //width / 2, height / 2 // arg for forceCenter()
-      // .force("x", d3.forceX().strength(-.02))
-      // .force("y", d3.forceY().strength(-.01));
       .force("x", d3.forceX())
-      .force("y", d3.forceY());
+      .force("y", d3.forceY())
+      // .stop()
+      // .tick(ticks)
+      ;
 
     d3.json("graph.json", function(error, graph) {
       if (error) throw error;
 
-      var link = svg.append("g")
+      const link = svg.append("g")
         .attr("class", "links")
         .selectAll("line")
         .data(graph.links)
         .enter().append("line");
 
-      var node = svg.append("g")
+      const node = svg.append("g")
         .attr("class", "nodes")
         .selectAll("circle")
         .data(graph.nodes)
@@ -102,9 +101,9 @@
       svg.on("mousemove", function () { // fisheye
         fisheye.focus(d3.mouse(this));
 
-        var mouseX = d3.mouse(this)[0];
-        var mouseY = d3.mouse(this)[1];
-        var r = fisheye.radius();
+        const mouseX = d3.mouse(this)[0];
+        const mouseY = d3.mouse(this)[1];
+        const r = fisheye.radius();
 
         node.each(function (d) { d.fisheye = fisheye(d); })
           .attr("cx", function (d) { return d.fisheye.x; })
