@@ -42,14 +42,10 @@
 
     const svg = d3.select("svg")
       .attr("viewBox", [-width / (2*zoom) - displace, -height / (2*zoom), width / zoom - displace, height / zoom]);
-      // width = 1600,
-      // height = 900;
-      // width = window.innerHeight,
-      // height = window.innerWidth;
 
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-    const fisheye = d3.fisheye.circular() // fisheye
+    const fisheye = d3.fisheye.circular()
       .radius(120)
       .distortion(2);
 
@@ -57,11 +53,7 @@
       .force("link", d3.forceLink().id(function(d) { return d.id; }))
       .force("charge", d3.forceManyBody())
       .force("x", d3.forceX())
-      .force("y", d3.forceY())
-      //.stop()
-      // .tick(300)
-      // .stop()
-      ;
+      .force("y", d3.forceY());
 
     d3.json("graph.json", function(error, graph) {
       if (error) throw error;
@@ -87,6 +79,11 @@
 
       simulation.force("link")
         .links(graph.links);
+
+      while (simulation.alpha() > simulation.alphaMin()) { //creates static graph
+        simulation.tick(); 
+        ticked(); 
+      }
 
       function ticked() {
         link
